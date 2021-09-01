@@ -1,18 +1,17 @@
 const Users = require('./../users/users-model');
 const Posts = require('./../posts/posts-model');
-const { response } = require('../server');
 
 function logger(req, res, next) {
-  const url = req.url;
+  const url = req.originalUrl;
   const method = req.method;
-  const timestamp = Date.now();
+  const timestamp = new Date().toLocaleString
   console.log(`${method}, ${url}, ${timestamp}`)
   next();
 }
 
 function validateUserId(req, res, next) {
   const userId = req.params.id;
-  Users.findById(userId)
+  Users.getById(userId)
     .then(user => {
       if(user) {
         req.user = user;
@@ -27,7 +26,7 @@ function validateUserId(req, res, next) {
 function validateUser(req, res, next) {
   const user = req.body;
   if (!user.name) {
-    next({status: 400, message: "missing required name field" });
+    res.status(400).json({ message: "missing required name field" });
   } else {
     next();
   }
@@ -36,10 +35,11 @@ function validateUser(req, res, next) {
 function validatePost(req, res, next) {
   const post = req.body;
   if (!post.text) {
-    next({status: 400, message: "missing required text field" });
+    res.status(400).json({ message: "missing required text field" })
+    // next({status: 400, message: "missing required text field" });
   } else {
     next();
-  }
+  } 
 }
 
 module.exports = { logger, validateUserId, validateUser, validatePost }
