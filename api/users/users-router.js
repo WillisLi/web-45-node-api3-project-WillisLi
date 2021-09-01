@@ -21,7 +21,6 @@ router.get('/', (req, res) => {
 router.get('/:id', validateUserId, (req, res) => {
   // RETURN THE USER OBJECT
   // this needs a middleware to verify user id
-  console.log(req.user)
   res.json(req.user)
 });
 
@@ -74,7 +73,7 @@ router.post('/:id/posts', validateUserId, validatePost, (req, res, next) => {
   // RETURN THE NEWLY CREATED USER POST
   // this needs a middleware to verify user id
   // and another middleware to check that the request body is valid
-  const newPost = {user_id: req.params.id, text: req.text};
+  const newPost = {text: req.text, user_id: req.params.id};
   Posts.insert(newPost)
     .then(newPost => {
       res.status(201).json(newPost);
